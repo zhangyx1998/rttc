@@ -1,6 +1,6 @@
 # Type guard tests
 from . import Test
-from src.type_check import type_guard
+from type_check import type_guard
 
 @type_guard
 class C(list[int]):

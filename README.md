@@ -100,7 +100,7 @@ This decorator allows you to convert a class or a function into a type-guarded o
 It is analogous to performing a `type_assert` on function return values or on returned class instances.
 
 ```python
-from src.type_check import type_guard
+from type_check import type_guard
 
 @type_guard
 def fn(x) -> int | float | str:

@@ -1,5 +1,5 @@
 # Type check tests
-from src.type_check import TypeCheckResult, TypeCheckError, type_check
+from type_check import TypeCheckResult, TypeCheckError, type_check
 from .__logger__ import Logger
 
 reason = Logger.create(None, "REASON", level_color="blue", msg_color="grey")

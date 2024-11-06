@@ -1,5 +1,5 @@
 from . import Test
-from src.type_check import type_check
+from type_check import type_check
 
 # List
 Test(type_check, [1, "2", 3.0], list[int, str, float]) >> True

@@ -1,5 +1,5 @@
 from . import Test
-from src.type_check import type_check
+from type_check import type_check
 
 
 # Custom class type checking
