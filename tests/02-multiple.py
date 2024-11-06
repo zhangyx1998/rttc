@@ -1,5 +1,4 @@
-from . import Test
-from type_check import type_check
+from . import Test, type_check
 
 # List
 Test(type_check, [1, "2", 3.0], list[int, str, float]) >> True

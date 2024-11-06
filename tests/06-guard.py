@@ -1,13 +1,12 @@
 # Type guard tests
-from . import Test
-from type_check import type_guard
+from . import Test, type_guard
 
 @type_guard
 class A(list[int]):
     pass
 
 Test(A, [1, 2, 3]) >> True
-Test(A, [1, 2, 0.0]) >> False
+Test(A, [1, 2, "3"]) >> False
 
 from dataclasses import dataclass
 
@@ -15,11 +14,11 @@ from dataclasses import dataclass
 @dataclass
 class B:
     x: int
-    y: float
+    y: str
 
 
-Test(B, x=1, y=2.0) >> True
-Test(B, x=1.0, y=2) >> False
+Test(B, x=1, y="2") >> True
+Test(B, x="1", y=2) >> False
 
 
 from typing import TypeVar, Generic
@@ -32,8 +31,8 @@ class C(Generic[T]):
     x: T
 
 
-# Test(C[int], x=1) >> True
-# Test(C[int], x=1.0) >> False
+Test(C[int], x=1) >> True
+Test(C[int], x="1") >> False
 
 
 @type_guard

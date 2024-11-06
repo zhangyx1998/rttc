@@ -1,6 +1,5 @@
-from . import Test
-from type_check import type_check
+from . import Test, type_check
 
 # Union types are also supported
-Test(type_check, [[1, 2], [3.0, 4.0]], list[list[int] | list[float]]) >> True
-Test(type_check, [[1, 2.0], [3, 4.0]], list[list[int] | list[float]]) >> False
+Test(type_check, [[1, 2], ["3", "4"]], list[list[int] | list[str]]) >> True
+Test(type_check, [[1, "2"], [3, "4"]], list[list[int] | list[float]]) >> False

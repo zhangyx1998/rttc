@@ -1,5 +1,4 @@
-from . import Test
-from type_check import type_check
+from . import Test, type_check
 
 
 # Custom class type checking

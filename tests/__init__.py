@@ -1,6 +1,15 @@
 # Type check tests
-from type_check import TypeCheckResult, TypeCheckError, type_check
+import os
+from type_check import TypeCheckResult
 from .__logger__ import Logger
+
+# Functions to be tested
+from type_check import type_check, type_assert, type_guard, TypeCheckError
+
+if os.environ.get("TARGET") == "typeguard":
+    # Alternative test target - compare to well-known library `typeguard`
+    from typeguard import check_type as type_check, typechecked as type_guard, TypeCheckError
+
 
 reason = Logger.create(None, "REASON", level_color="blue", msg_color="grey")
 passed = Logger.create(None, "PASS", level_color="green", msg_color="white")
@@ -36,7 +45,7 @@ class Test:
                 orig = getattr(result, "__orig_class__", result.__class__)
                 result = TypeCheckResult(type_rep, orig, True, None)
         except TypeCheckError as e:
-            result = e.result
+            result = getattr(e, "result", False)
         except TypeError as e:
             type_error = e.with_traceback(None)
             raise type_error
@@ -46,9 +55,8 @@ class Test:
         if not success:
             msg.append(f"(expected {expected})")
         logger(*msg)
-        if result.reason is not None:
+        if getattr(result, "reason", None) is not None:
             reason(result.reason)
-        Logger.print("")  # White space
         if not success:
             failed_tests += 1
         return self

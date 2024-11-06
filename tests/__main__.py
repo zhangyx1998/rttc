@@ -18,9 +18,8 @@ tests.sort()
 # with Logger.use(progress.write):
 for test in tests:
     title = f" {test} "
-    pad = "=" * (80 - len(title))
+    pad = "=" * (60 - len(title))
     print(pad[: len(pad) // 2] + title + pad[len(pad) // 2 :])
-    print("")
     import_module(f".{test}", package="tests")
 
 sys.exit(Test.summary())
