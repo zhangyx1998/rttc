@@ -1,8 +1,8 @@
 ## Python run-time type checking utility
 
-Author: Yuxuan Zhang
+Author: [Yuxuan Zhang](mailto:python@z-yx.cc) | [GitHub Repository](https://github.com/zhangyx1998/rttc)
 
-> This project originates from this [post](https://discuss.python.org/t/runtime-type-checking-using-parameterized-types/70173) on the python discussion forum.
+The `rttc` project originates from this [post](https://discuss.python.org/t/runtime-type-checking-using-parameterized-types/70173) on the python discussion forum.
 
 ### Usage
 

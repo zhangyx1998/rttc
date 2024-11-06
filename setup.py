@@ -8,9 +8,9 @@ with open(HOME / "README.md", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="type-check",
-    version="0.1.8",
-    description="Type check decorator for python",
+    name="rttc",
+    version="1.0.1",
+    description="Python run-time type check",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
@@ -21,5 +21,5 @@ setup(
         "Programming Language :: Python :: 3.13",
     ],
     keywords="type check safe",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
 )
