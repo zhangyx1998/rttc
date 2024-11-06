@@ -41,11 +41,12 @@ class Test:
             raise type_error  # Exception during test
         success = bool(result) == expected
         logger = passed if success else failed
-        msg = [repr(result)]
+        msg = [str(result)]
         if not success:
             msg.append(f"(expected {expected})")
         logger(*msg)
-        reason(str(result))
+        if result.reason is not None:
+            reason(result.reason)
         Logger.print("")  # White space
         if not success:
             failed_tests += 1

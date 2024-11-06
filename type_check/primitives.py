@@ -48,20 +48,17 @@ class TypeCheckResult:
     passed: bool
     reason: str | None
 
-    def __bool__(self) -> bool:
-        return self.passed
+    def __str__(self) -> str:
+        return f"{repr(self.value)} is {type_repr(self.type_to_check)} => {self.passed}"
 
     def __repr__(self) -> str:
-        return f"{repr(self.value)} is {type_repr(self.type_to_check)} => {self.passed}"
+        return f"type_check({self})"
+
+    def __bool__(self) -> bool:
+        return self.passed
 
     def __eq__(self, value):
         return bool(self) == value
 
     def __neq__(self, value):
         return bool(self) != value
-
-    def __str__(self) -> str:
-        if self.reason is not None:
-            return str(self.reason)
-        else:
-            return "Type check passed" if self.passed else "Type check failed"

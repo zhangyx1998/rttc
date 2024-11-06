@@ -127,116 +127,100 @@ C(x=1.0) # TypeCheckError: C.x = float(1.0) is not int
 This is the output of test cases. You can run the test yourself!
 
 ```
-================================== 01-simple ===================================                                                                     
-
+================================== 01-simple ===================================
+       
 [ PASS ] 1 is int => True
-[REASON] Type check passed
-
-[ PASS ] 1.0 is int => False                                                                                                                         
-[REASON] float(1.0) is not int                                                                                                                       
-
-[ PASS ] [1, 2, 3] is list[int] => True                                                                                                              
-[REASON] Type check passed
-
-[ PASS ] [1, 2, 3.0] is list[int] => False                                                                                                           
-[REASON] list[2] = float(3.0) is not int                                                                                                             
-
-[ PASS ] 1 is Literal[1] => True                                                                                                                     
-[REASON] Type check passed
-
-[ PASS ] 2 is Literal[1] => False                                                                                                                    
-[REASON] int(2) is not Literal[1]                                                                                                                    
-
-[ PASS ] 'alex' is Literal['alex', 'bob'] => True                                                                                                    
-[REASON] Type check passed
-
-[ PASS ] 'alex' is Literal['bob'] => False                                                                                                           
-[REASON] str('alex') is not Literal['bob']                                                                                                           
-
-================================= 02-multiple ==================================                                                                     
-
-[ PASS ] [1, '2', 3.0] is list[int, str, float] => True                                                                                              
-[REASON] Type check passed
-
-[ PASS ] [1, '2', '3'] is list[int, str, float] => False                                                                                             
-[REASON] list[2] = str('3') is not float                                                                                                             
-
-[ PASS ] [1, '2'] is list[int, str, float] => False                                                                                                  
-[REASON] list([1, '2']) is not list[int, str, float]                                                                                                 
-
-[ PASS ] (1, '2', 3.0) is tuple[int, str, float] => True                                                                                             
-[REASON] Type check passed
-
-[ PASS ] (1, '2', '3') is tuple[int, str, float] => False                                                                                            
-[REASON] tuple[2] = str('3') is not float                                                                                                            
-
-[ PASS ] {1, 3.0, '2'} is set[int | str | float] => True                                                                                             
-[REASON] Type check passed
-
-[ PASS ] {None, 1, '2'} is set[int | str | float] => False                                                                                           
-[REASON] set['?'] = NoneType(None) is not int | str | float                                                                                          
-
-[ PASS ] {1: '2', 3: 4.0} is dict[int, str | float] => True                                                                                          
-[REASON] Type check passed
-
-[ PASS ] {1: '2', '3': 4.0} is dict[int, str | float] => False                                                                                       
-[REASON] dict<key> = str('3') is not int                                                                                                             
-
-[ PASS ] {1: '2', 3: None} is dict[int, str | float] => False                                                                                        
-[REASON] dict[3] = NoneType(None) is not str | float                                                                                                 
-
-================================== 03-nested ===================================                                                                     
-
-[ PASS ] [[1, 2], [3, 4]] is list[list[int]] => True                                                                                                 
-[REASON] Type check passed
-
-[ PASS ] [[1, 2], [3, '4']] is list[list[int]] => False                                                                                              
-[REASON] list[1][1] = str('4') is not int                                                                                                            
-
-================================== 04-unions ===================================                                                                     
-
-[ PASS ] [[1, 2], [3.0, 4.0]] is list[list[int] | list[float]] => True                                                                               
-[REASON] Type check passed
-
-[ PASS ] [[1, 2.0], [3, 4.0]] is list[list[int] | list[float]] => False                                                                              
-[REASON] list[0] = list([1, 2.0]) is not list[int] | list[float]                                                                                     
-
-================================== 05-inherit ==================================                                                                     
-
-[ PASS ] [1, 2, 3] is A => True                                                                                                                      
-[REASON] Type check passed
-
-[ PASS ] [1, 2, 0.0] is A => False                                                                                                                   
-[REASON] A[2] = float(0.0) is not int                                                                                                                
-
-[ PASS ] B(x=1, y='2') is tests.05-inherit.B[int, str] => True                                                                                       
-[REASON] Type check passed
-
-[ PASS ] B(x=1, y=2.0) is tests.05-inherit.B[int, str] => False                                                                                      
-[REASON] B.y = float(2.0) is not str                                                                                                                 
-
-=================================== 06-guard ===================================                                                                     
-
-[ PASS ] C([1, 2, 3]) is C => True                                                                                                                   
-[REASON] Type check passed
-
-[ PASS ] C([1, 2, 0.0]) is C => False                                                                                                                
-[REASON] C[2] = float(0.0) is not int                                                                                                                
-
-[ PASS ] C(x=1, y=2.0) is C => True                                                                                                                  
-[REASON] Type check passed
-
-[ PASS ] C(x=1.0, y=2) is C => False                                                                                                                 
-[REASON] C.x = float(1.0) is not int                                                                                                                 
-
-[ PASS ] add(1, 2) is int => True                                                                                                                    
-[REASON] Type check passed
-
-[ PASS ] add('1', '2') is str => True                                                                                                                
-[REASON] Type check passed
-
-[ PASS ] add([1], [2]) is int | str => False                                                                                                         
-[REASON] list([1, 2]) is not int | str                                                                                                               
-
+       
+[ PASS ] 1.0 is int => False
+[REASON] float(1.0) is not int
+       
+[ PASS ] [1, 2, 3] is list[int] => True
+       
+[ PASS ] [1, 2, 3.0] is list[int] => False
+[REASON] list[2] = float(3.0) is not int
+       
+[ PASS ] 1 is Literal[1] => True
+       
+[ PASS ] 2 is Literal[1] => False
+[REASON] int(2) is not Literal[1]
+       
+[ PASS ] 'alex' is Literal['alex', 'bob'] => True
+       
+[ PASS ] 'alex' is Literal['bob'] => False
+[REASON] str('alex') is not Literal['bob']
+       
+================================= 02-multiple ==================================
+       
+[ PASS ] [1, '2', 3.0] is list[int, str, float] => True
+       
+[ PASS ] [1, '2', '3'] is list[int, str, float] => False
+[REASON] list[2] = str('3') is not float
+       
+[ PASS ] [1, '2'] is list[int, str, float] => False
+[REASON] list([1, '2']) is not list[int, str, float]
+       
+[ PASS ] (1, '2', 3.0) is tuple[int, str, float] => True
+       
+[ PASS ] (1, '2', '3') is tuple[int, str, float] => False
+[REASON] tuple[2] = str('3') is not float
+       
+[ PASS ] {1, 3.0, '2'} is set[int | str | float] => True
+       
+[ PASS ] {None, 1, '2'} is set[int | str | float] => False
+[REASON] set['?'] = NoneType(None) is not int | str | float
+       
+[ PASS ] {1: '2', 3: 4.0} is dict[int, str | float] => True
+       
+[ PASS ] {1: '2', '3': 4.0} is dict[int, str | float] => False
+[REASON] dict<key> = str('3') is not int
+       
+[ PASS ] {1: '2', 3: None} is dict[int, str | float] => False
+[REASON] dict[3] = NoneType(None) is not str | float
+       
+================================== 03-nested ===================================
+       
+[ PASS ] [[1, 2], [3, 4]] is list[list[int]] => True
+       
+[ PASS ] [[1, 2], [3, '4']] is list[list[int]] => False
+[REASON] list[1][1] = str('4') is not int
+       
+================================== 04-unions ===================================
+       
+[ PASS ] [[1, 2], [3.0, 4.0]] is list[list[int] | list[float]] => True
+       
+[ PASS ] [[1, 2.0], [3, 4.0]] is list[list[int] | list[float]] => False
+[REASON] list[0] = list([1, 2.0]) is not list[int] | list[float]
+       
+================================== 05-inherit ==================================
+       
+[ PASS ] [1, 2, 3] is A => True
+       
+[ PASS ] [1, 2, 0.0] is A => False
+[REASON] A[2] = float(0.0) is not int
+       
+[ PASS ] B(x=1, y='2') is tests.05-inherit.B[int, str] => True
+       
+[ PASS ] B(x=1, y=2.0) is tests.05-inherit.B[int, str] => False
+[REASON] B.y = float(2.0) is not str
+       
+=================================== 06-guard ===================================
+       
+[ PASS ] C([1, 2, 3]) is C => True
+       
+[ PASS ] C([1, 2, 0.0]) is C => False
+[REASON] C[2] = float(0.0) is not int
+       
+[ PASS ] C(x=1, y=2.0) is C => True
+       
+[ PASS ] C(x=1.0, y=2) is C => False
+[REASON] C.x = float(1.0) is not int
+       
+[ PASS ] add(1, 2) is int => True
+       
+[ PASS ] add('1', '2') is str => True
+       
+[ PASS ] add([1], [2]) is int | str => False
+[REASON] list([1, 2]) is not int | str
+       
 [ PASS ] All 33 tests passed
 ```
