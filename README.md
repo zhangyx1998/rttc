@@ -85,7 +85,7 @@ These features all work recursively with each other!
 
     Examples coming soon...
 
-    For now, please refer to [builtin_checks.py](src/type_check/builtin_checks.py).
+    For now, please refer to [builtin_checks.py](type_check/builtin_checks.py).
 
 ### Other tools in the box
 
