@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "type_check"
+version = "0.0.1"
+authors = [
+  { name="Yuxuan Zhang", email="python@z-yx.cc" },
+]
+description = "Python run-time type checking"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/zhangyx1998/rttc"
+Issues = "https://github.com/zhangyx1998/rttc/issues"
