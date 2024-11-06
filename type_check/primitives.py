@@ -7,9 +7,18 @@ def type_repr(t: type) -> str:
         return str(t).removeprefix('typing.')
 
 
-class Chain(list["str | Chain.Attr | Chain.Key"]):
-    def enter(self, el: "str | Attr | Key"):
-        return self.__class__(self + [el])
+class Chain:
+    def __init__(self, item: "str | Chain.Attr | Chain.Key", parent: "Chain" = None):
+        self.value = item
+        self.parent = parent
+
+    def __call__(self, el: "str | Attr | Key"):
+        return self.__class__(el, parent=self)
+    
+    def __iter__(self):
+        if self.parent is not None:
+            yield from self.parent
+        yield self.value
 
     @dataclass
     class Key:
@@ -31,13 +40,17 @@ class TypeCheckError(TypeError):
     type_to_check: type
 
     def __init__(self, chain: Chain, expected: list[type], got: object):
-        desc = "".join(map(str, chain))
         _exp = " | ".join((type_repr(t) for t in expected))
         _got = f"{type(got).__name__}({repr(got)})"
-        if len(chain) > 1:
-            super().__init__(f"{desc} = {_got} is not {_exp}")
-        else:
+        if chain.parent is None:
             super().__init__(f"{_got} is not {_exp}")
+        else:
+            desc = "".join(map(str, chain))
+            super().__init__(f"{desc} = {_got} is not {_exp}")
+    
+    @property
+    def result(self):
+        return TypeCheckResult(self.value, self.type_to_check, False, str(self))
 
 
 @dataclass

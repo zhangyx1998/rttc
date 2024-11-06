@@ -3,23 +3,38 @@ from . import Test
 from type_check import type_guard
 
 @type_guard
-class C(list[int]):
+class A(list[int]):
     pass
 
-Test(C, [1, 2, 3]) >> True
-Test(C, [1, 2, 0.0]) >> False
+Test(A, [1, 2, 3]) >> True
+Test(A, [1, 2, 0.0]) >> False
 
 from dataclasses import dataclass
 
 @type_guard
 @dataclass
-class C:
+class B:
     x: int
     y: float
 
 
-Test(C, x=1, y=2.0) >> True
-Test(C, x=1.0, y=2) >> False
+Test(B, x=1, y=2.0) >> True
+Test(B, x=1.0, y=2) >> False
+
+
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
+@type_guard
+@dataclass
+class C(Generic[T]):
+    x: T
+
+
+# Test(C[int], x=1) >> True
+# Test(C[int], x=1.0) >> False
+
 
 @type_guard
 def add(x: int | str, y: int | str) -> int | str:

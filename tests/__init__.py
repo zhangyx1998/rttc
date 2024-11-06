@@ -33,12 +33,13 @@ class Test:
             result = self.fn(*self.args, **self.kwargs)
             if not isinstance(result, TypeCheckResult):
                 # Normal termination of type guarded function
-                result = TypeCheckResult(type_rep, result.__class__, True, None)
+                orig = getattr(result, "__orig_class__", result.__class__)
+                result = TypeCheckResult(type_rep, orig, True, None)
         except TypeCheckError as e:
-            result = TypeCheckResult(type_rep, e.type_to_check, False, str(e))
+            result = e.result
         except TypeError as e:
             type_error = e.with_traceback(None)
-            raise type_error  # Exception during test
+            raise type_error
         success = bool(result) == expected
         logger = passed if success else failed
         msg = [str(result)]

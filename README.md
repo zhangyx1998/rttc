@@ -114,12 +114,24 @@ from dataclasses import dataclass
 
 @type_guard
 @dataclass
-class C:
+class A:
     x: int
 
-C(x=1) # ok
+A(x=1) # ok
+A(x=1.0) # TypeCheckError: A.x = float(1.0) is not int
+```
 
-C(x=1.0) # TypeCheckError: C.x = float(1.0) is not int
+Since `1.0.4`, the following is made possible:
+
+```python
+@type_guard
+@dataclass
+class B:
+    x: int
+
+B[int](x=1)   # ok
+B[int](x=1.0) # TypeCheckError: A.x = float(1.0) is not int
+B[float](x=1) # TypeCheckError: A.x = int(1) is not float
 ```
 
 ### Super friendly stack trace

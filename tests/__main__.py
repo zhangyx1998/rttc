@@ -15,15 +15,12 @@ for test in Path(__file__).parent.glob("*.py"):
 
 tests.sort()
 
-progress = tqdm(
-    tests, desc="Running tests", unit="test", dynamic_ncols=True, leave=False
-)
-with Logger.use(progress.write):
-    for test in progress:
-        title = f" {test} "
-        pad = "=" * (80 - len(title))
-        progress.write(pad[: len(pad) // 2] + title + pad[len(pad) // 2 :])
-        progress.write("")
-        import_module(f".{test}", package="tests")
+# with Logger.use(progress.write):
+for test in tests:
+    title = f" {test} "
+    pad = "=" * (80 - len(title))
+    print(pad[: len(pad) // 2] + title + pad[len(pad) // 2 :])
+    print("")
+    import_module(f".{test}", package="tests")
 
 sys.exit(Test.summary())

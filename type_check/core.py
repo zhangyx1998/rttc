@@ -33,7 +33,7 @@ def type_check(obj, t: type) -> bool:
 
 def type_assert(obj, t: type, *, chain: Chain | None = None) -> None | NoReturn:
     if chain is None:
-        chain = Chain([type(obj).__name__])
+        chain = Chain(type(obj).__name__)
     try:
         __type_assert__(obj, t, chain=chain)
     except TypeCheckError as e:
@@ -100,7 +100,7 @@ def __type_assert__(obj, t: type, *, chain: Chain) -> None | NoReturn:
 
     # Try to fallback to type hints
     parameters = getattr(origin, "__parameters__", tuple())
-    if len(parameters) == len(args):
+    if len(parameters) == len(args): # Fully parameterized
         try:
             hints: dict[str, TypeVar | type] = get_type_hints(obj)
         except:  # No type hints available in user defined class
@@ -119,16 +119,10 @@ def __type_assert__(obj, t: type, *, chain: Chain) -> None | NoReturn:
                     hint = templates[hint]
                 else:
                     raise TypeError(f"Type variable {hint} not instantiated")
-            __type_assert__(item, hint, chain=chain.enter(Chain.Attr(attr)))
+            __type_assert__(item, hint, chain=chain(Chain.Attr(attr)))
         return
-
-    # Type args specified but type_check not supported by this object
-    if STRICT:
-        raise TypeError(f"{repr(obj)} does not support type checking")
-    else:
-        import warnings
-
-        warnings.warn(f"{repr(obj)} does not support type checking", RuntimeWarning)
+    else:  # Partially parameterized, wait for full parameterization
+        return
 
 
 def type_guard(t: type):
@@ -160,22 +154,20 @@ def type_guard(t: type):
     """
     if isinstance(t, type):  # class decorator
 
-        t_init = t.__init__
+        from .transparent import Transparent
 
-        def __init__(self, *args, **kwargs):
-            t_init(self, *args, **kwargs)
-            try:
-                type_assert(self, t)
-            except TypeCheckError as e:
-                type_check_error = e.with_traceback(None)
-                raise type_check_error
+        class TypeGuard(Transparent, t):
+            def __call__(self, *args, **kwargs):
+                result = super().__call__(*args, **kwargs)
+                type_assert(result, t)
+                if hasattr(result, "__orig_class__"):
+                    type_assert(result, result.__orig_class__)
+                return result
 
-        def __repr__(self):
-            return f"TypeGuard{repr(t)}"
+            def __repr__(self):
+                return f"TypeGuard({t.__repr__(self)})"
 
-        setattr(t, "__init__", __init__)
-        setattr(t, "__repr__", __repr__)
-        return t
+        return TypeGuard(t)
 
     elif callable(t):  # annotated function
         import inspect
