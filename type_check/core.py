@@ -84,8 +84,8 @@ def __type_assert__(obj, t: type, *, chain: Chain) -> None | NoReturn:
         # Origin type mismatch
         raise TypeCheckError(chain, [origin], obj)
 
-    # Use custom type checker whenever possible
     try:
+        # Use custom type checker whenever possible
         if hasattr(origin, "__type_check__"):
             return origin.__type_check__(obj, *args, chain=chain)
         if hasattr(obj, "__type_check__"):

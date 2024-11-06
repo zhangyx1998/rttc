@@ -1,10 +1,11 @@
 import sys
 from pathlib import Path
-from tqdm import tqdm
 from importlib import import_module
 
+# Merge stderr into stdout
+sys.stderr = sys.stdout
+
 from . import Test
-from .__logger__ import Logger
 
 tests: list[str] = []
 

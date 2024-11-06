@@ -85,11 +85,11 @@ These features all work recursively with each other!
 
     Examples coming soon...
 
-    For now, please refer to [builtin_checks.py](type_check/builtin_checks.py).
+    For now, please refer to [type_check/builtin_checks.py](https://github.com/zhangyx1998/rttc/blob/master/type_check/builtin_checks.py).
 
 ### Other tools in the box
 
-#### `type_assert()`
+### `type_assert()`
 
 Similar to type_check(), but it raises `TypeCheckError` instead of returns `bool`.
 The raised `TypeCheckError` contains debug-friendly information indicating what caused type check to fail (check below for details).
@@ -134,105 +134,88 @@ B[int](x=1.0) # TypeCheckError: A.x = float(1.0) is not int
 B[float](x=1) # TypeCheckError: A.x = int(1) is not float
 ```
 
-### Super friendly stack trace
+### Info-rich return values and exceptions
 
-This is the output of test cases. You can run the test yourself!
+### `TypeCheckResult`
+
+`TypeCheckResult` is the return type of `type_check()` function.
+It can be used directly as a `bool` or compared with a `bool`.
+
+For example:
+
+```python
+from type_check import type_check
+
+result = type_check([1], list[int])
+
+print(bool(result), result == True, result == False)
+# True, True, False
+print(str(result))
+# [1] is list[int] => True
+print(repr(result))
+# type_check([1] is list[int] => True)
+```
+
+And when a result evaluates to `False`, you can use `TypeCheckResult.reason` to know why:
+
+```python
+result = type_check(["1"], list[int])
+
+print(result)
+# ['1'] is list[int] => False
+print(result.reason)
+# list[0] = str('1') is not int
+```
+
+### `TypeCheckError`
+
+`TypeCheckError` is inherited from `TypeError`, it will be raised by `type_assert()` and `@type_guard` when type check fails.
+
+It contains chained attributes and keys to help you locate the data that cause type check to fail:
+
+```python
+from type_check import type_assert
+
+type_assert([1, 2, '3', 4], list[int])
+```
+
+Will raise:
 
 ```
-================================== 01-simple ===================================
-       
-[ PASS ] 1 is int => True
-       
-[ PASS ] 1.0 is int => False
-[REASON] float(1.0) is not int
-       
-[ PASS ] [1, 2, 3] is list[int] => True
-       
-[ PASS ] [1, 2, 3.0] is list[int] => False
-[REASON] list[2] = float(3.0) is not int
-       
-[ PASS ] 1 is Literal[1] => True
-       
-[ PASS ] 2 is Literal[1] => False
-[REASON] int(2) is not Literal[1]
-       
-[ PASS ] 'alex' is Literal['alex', 'bob'] => True
-       
-[ PASS ] 'alex' is Literal['bob'] => False
-[REASON] str('alex') is not Literal['bob']
-       
-================================= 02-multiple ==================================
-       
-[ PASS ] [1, '2', 3.0] is list[int, str, float] => True
-       
-[ PASS ] [1, '2', '3'] is list[int, str, float] => False
-[REASON] list[2] = str('3') is not float
-       
-[ PASS ] [1, '2'] is list[int, str, float] => False
-[REASON] list([1, '2']) is not list[int, str, float]
-       
-[ PASS ] (1, '2', 3.0) is tuple[int, str, float] => True
-       
-[ PASS ] (1, '2', '3') is tuple[int, str, float] => False
-[REASON] tuple[2] = str('3') is not float
-       
-[ PASS ] {1, 3.0, '2'} is set[int | str | float] => True
-       
-[ PASS ] {None, 1, '2'} is set[int | str | float] => False
-[REASON] set['?'] = NoneType(None) is not int | str | float
-       
-[ PASS ] {1: '2', 3: 4.0} is dict[int, str | float] => True
-       
-[ PASS ] {1: '2', '3': 4.0} is dict[int, str | float] => False
-[REASON] dict<key> = str('3') is not int
-       
-[ PASS ] {1: '2', 3: None} is dict[int, str | float] => False
-[REASON] dict[3] = NoneType(None) is not str | float
-       
-================================== 03-nested ===================================
-       
-[ PASS ] [[1, 2], [3, 4]] is list[list[int]] => True
-       
-[ PASS ] [[1, 2], [3, '4']] is list[list[int]] => False
-[REASON] list[1][1] = str('4') is not int
-       
-================================== 04-unions ===================================
-       
-[ PASS ] [[1, 2], [3.0, 4.0]] is list[list[int] | list[float]] => True
-       
-[ PASS ] [[1, 2.0], [3, 4.0]] is list[list[int] | list[float]] => False
-[REASON] list[0] = list([1, 2.0]) is not list[int] | list[float]
-       
-================================== 05-inherit ==================================
-       
-[ PASS ] [1, 2, 3] is A => True
-       
-[ PASS ] [1, 2, 0.0] is A => False
-[REASON] A[2] = float(0.0) is not int
-       
-[ PASS ] B(x=1, y='2') is tests.05-inherit.B[int, str] => True
-       
-[ PASS ] B(x=1, y=2.0) is tests.05-inherit.B[int, str] => False
-[REASON] B.y = float(2.0) is not str
-       
-=================================== 06-guard ===================================
-       
-[ PASS ] C([1, 2, 3]) is C => True
-       
-[ PASS ] C([1, 2, 0.0]) is C => False
-[REASON] C[2] = float(0.0) is not int
-       
-[ PASS ] C(x=1, y=2.0) is C => True
-       
-[ PASS ] C(x=1.0, y=2) is C => False
-[REASON] C.x = float(1.0) is not int
-       
-[ PASS ] add(1, 2) is int => True
-       
-[ PASS ] add('1', '2') is str => True
-       
-[ PASS ] add([1], [2]) is int | str => False
-[REASON] list([1, 2]) is not int | str
-       
-[ PASS ] All 33 tests passed
+TypeCheckError                            Traceback (most recent call last)
+Cell In[47], line 10
+    6 print(result.reason)
+    8 from type_check import type_assert
+---> 10 type_assert([1, 2, "3", 4], list[int])
+
+File rttc/type_check/core.py:45, in type_assert(obj, t, chain)
+    43     # Clear traceback to avoid confusion
+    44     type_check_error = e.with_traceback(None)
+---> 45     raise type_check_error
+    46 except TypeError as e:
+    47     type_error = e.with_traceback(None)
+
+TypeCheckError: list[2] = str('3') is not int
+```
+
+### Testing
+
+Test cases live under `tests/` and are grouped by categories. Test results are available at [docs/test-results.txt](https://github.com/zhangyx1998/rttc/blob/master/docs/test-results.txt). _PRs to add more test cases to it will be deeply appreciated._
+
+#### Instructions to run tests locally
+
+```sh
+git clone git@github.com:zhangyx1998/rttc.git
+
+cd rttc && python3 -m pip install -r tests/requirements.txt # termcolor
+
+python3 -m tests
+```
+
+#### Testing against well-known library `typeguard`:
+
+```sh
+pip3 install typeguard
+
+TARGET=typegurad python3 -m tests
 ```
