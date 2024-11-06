@@ -1,10 +1,5 @@
 from dataclasses import dataclass
-
-def type_repr(t: type) -> str:
-    if type(t) is type and hasattr(t, "__name__"):
-        return t.__name__
-    else:
-        return str(t).removeprefix('typing.')
+from typing import _type_repr as type_repr
 
 
 class Chain:
