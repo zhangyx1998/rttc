@@ -12,11 +12,11 @@
 [ PASS ] 'alex' is typing.Literal['bob'] => False
 [REASON] str('alex') is not typing.Literal['bob']
 ======================= 02-multiple ========================
-[ PASS ] [1, '2', 3.0] is list[int, str, float] => True
-[ PASS ] [1, '2', '3'] is list[int, str, float] => False
-[REASON] list[2] = str('3') is not float
-[ PASS ] [1, '2'] is list[int, str, float] => False
-[REASON] list([1, '2']) is not list[int, str, float]
+[ PASS ] (1, '2', 3.0) is tuple[int, str, float] => True
+[ PASS ] (1, '2', '3') is tuple[int, str, float] => False
+[REASON] tuple[2] = str('3') is not float
+[ PASS ] (1, '2') is tuple[int, str, float] => False
+[REASON] tuple((1, '2')) is not tuple[int, str, float]
 [ PASS ] (1, '2', 3.0) is tuple[int, str, float] => True
 [ PASS ] (1, '2', '3') is tuple[int, str, float] => False
 [REASON] tuple[2] = str('3') is not float
