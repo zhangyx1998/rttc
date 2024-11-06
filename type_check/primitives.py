@@ -52,7 +52,13 @@ class TypeCheckResult:
         return self.passed
 
     def __repr__(self) -> str:
-        return f"{repr(self.value)} is {type_repr(self.type_to_check)}"
+        return f"{repr(self.value)} is {type_repr(self.type_to_check)} => {self.passed}"
+
+    def __eq__(self, value):
+        return bool(self) == value
+
+    def __neq__(self, value):
+        return bool(self) != value
 
     def __str__(self) -> str:
         if self.reason is not None:

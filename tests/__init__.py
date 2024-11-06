@@ -41,7 +41,7 @@ class Test:
             raise type_error  # Exception during test
         success = bool(result) == expected
         logger = passed if success else failed
-        msg = [repr(result), "=>", bool(result)]
+        msg = [repr(result)]
         if not success:
             msg.append(f"(expected {expected})")
         logger(*msg)
