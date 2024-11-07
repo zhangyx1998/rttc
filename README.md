@@ -33,7 +33,7 @@ type_check([(1, 2), [3.0, "4"]] , DataType) # False
 
 #### Wondering how far you can go?
 
-These features all work recursively with each other!
+_These features all work recursively with each other!_
 
 - **Union types** are supported:
 
@@ -80,8 +80,16 @@ These features all work recursively with each other!
     type_check(C(x=1  , y="y", z=2), C[int, str]) # False - C.z = int(2) is not Literal[1]
     ```
 
+    **Since `1.0.6`, type-hinted objects can omit type (2nd) argument:**
 
-- **Custom checking hooks**:
+    ```python
+    type_check(C[int, str](x=1  , y="y", z=1)) # True
+    type_check(C[int, str](x=1.0, y="y", z=1)) # False - C.x = float(1.0) is not int
+    type_check(C[int, str](x=1  , y="y", z=2)) # False - C.z = int(2) is not Literal[1]
+    ```
+
+
+- **Custom type_check hooks**:
 
     Examples coming soon...
 
@@ -89,12 +97,12 @@ These features all work recursively with each other!
 
 ### Other tools in the box
 
-### `type_assert()`
+#### `type_assert()`
 
 Similar to type_check(), but it raises `TypeCheckError` instead of returns `bool`.
 The raised `TypeCheckError` contains debug-friendly information indicating what caused type check to fail (check below for details).
 
-### `type_guard`
+#### `@type_guard`
 
 This decorator allows you to convert a class or a function into a type-guarded object.
 It is analogous to performing a `type_assert` on function return values or on returned class instances.
@@ -121,13 +129,13 @@ A(x=1) # ok
 A(x=1.0) # TypeCheckError: A.x = float(1.0) is not int
 ```
 
-Since `1.0.4`, the following is made possible:
+**Since `1.0.4`, templated classes are supported by type_guard:**
 
 ```python
 @type_guard
 @dataclass
-class B:
-    x: int
+class B[T]:
+    x: T
 
 B[int](x=1)   # ok
 B[int](x=1.0) # TypeCheckError: A.x = float(1.0) is not int
@@ -136,10 +144,10 @@ B[float](x=1) # TypeCheckError: A.x = int(1) is not float
 
 ### Info-rich return values and exceptions
 
-### `TypeCheckResult`
+#### `TypeCheckResult`
 
 `TypeCheckResult` is the return type of `type_check()` function.
-It can be used directly as a `bool` or compared with a `bool`.
+It can be used directly like a `bool` or compared with another `bool`.
 
 For example:
 
@@ -167,7 +175,7 @@ print(result.reason)
 # list[0] = str('1') is not int
 ```
 
-### `TypeCheckError`
+#### `TypeCheckError`
 
 `TypeCheckError` is inherited from `TypeError`, it will be raised by `type_assert()` and `@type_guard` when type check fails.
 
