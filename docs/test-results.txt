@@ -5,6 +5,12 @@
 [ PASS ] [1, 2, 3] is list[int] => True
 [ PASS ] [1, 2, ''] is list[int] => False
 [REASON] list[2] = str('') is not int
+[ PASS ] [] is list[int] => True
+[ PASS ] () is list[int] => False
+[REASON] tuple(()) is not list
+[ PASS ] [] is tuple[int] => False
+[REASON] list([]) is not tuple
+[ PASS ] () is tuple[int] => True
 [ PASS ] 1 is typing.Literal[1] => True
 [ PASS ] 2 is typing.Literal[1] => False
 [REASON] int(2) is not typing.Literal[1]
@@ -20,8 +26,8 @@
 [ PASS ] (1, '2', 3.0) is tuple[int, str, float] => True
 [ PASS ] (1, '2', '3') is tuple[int, str, float] => False
 [REASON] tuple[2] = str('3') is not float
-[ PASS ] {1, '2', 3.0} is set[int | str | float] => True
-[ PASS ] {None, 1, '2'} is set[int | str | float] => False
+[ PASS ] {'2', 3.0, 1} is set[int | str | float] => True
+[ PASS ] {None, '2', 1} is set[int | str | float] => False
 [REASON] set[?] = NoneType(None) is not int | str | float
 [ PASS ] {1: '2', 3: 4.0} is dict[int, str | float] => True
 [ PASS ] {1: '2', '3': 4.0} is dict[int, str | float] => False
@@ -43,6 +49,19 @@
 [ PASS ] B(x=1, y='2') is tests.05-inherit.B[int, str] => True
 [ PASS ] B(x=1, y=2.0) is tests.05-inherit.B[int, str] => False
 [REASON] B.y = float(2.0) is not str
+[ PASS ] B(x=1, y='2') is tests.05-inherit.B[int, str] => True
+[ PASS ] B(x=1, y=2.0) is tests.05-inherit.B[int, str] => False
+[REASON] B.y = float(2.0) is not str
+[ PASS ] C(x=1, y='2', z=False) is tests.05-inherit.C[int, str, bool] => True
+[ PASS ] C(x=1, y=2.0, z=False) is tests.05-inherit.C[int, str, bool] => False
+[REASON] C.y = float(2.0) is not str
+[ PASS ] C(x=1, y='2', z=None) is tests.05-inherit.C[int, str, bool] => False
+[REASON] C.z = NoneType(None) is not bool
+[ PASS ] C(x=1, y='2', z=False) is tests.05-inherit.C[int, str, bool] => True
+[ PASS ] C(x=1, y=2.0, z=False) is tests.05-inherit.C[int, str, bool] => False
+[REASON] C.y = float(2.0) is not str
+[ PASS ] C(x=1, y='2', z=None) is tests.05-inherit.C[int, str, bool] => False
+[REASON] C.z = NoneType(None) is not bool
 ========================= 06-guard =========================
 [ PASS ] A([1, 2, 3]) is tests.06-guard.A => True
 [ PASS ] [1, 2, '3'] is tests.06-guard.A => False
@@ -57,4 +76,4 @@
 [ PASS ] add('1', '2') is str => True
 [ PASS ] [1, 2] is int | str => False
 [REASON] list([1, 2]) is not int | str
-[ PASS ] All 35 tests passed
+[ PASS ] All 47 tests passed

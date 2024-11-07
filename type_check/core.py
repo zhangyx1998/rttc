@@ -1,10 +1,11 @@
-from typing import Union, Callable, NoReturn, Literal, TypeVar
+from typing import Union, Callable, NoReturn, Literal, TypeVar, _type_repr as type_repr
 from typing import get_args, get_origin, get_type_hints
 from typing_extensions import Unpack
 from types import UnionType
 from functools import wraps
 
 from .primitives import Chain, TypeCheckError, TypeCheckResult
+from .__private__ import Nothing
 
 # By default, raise TypeError (not TypeCheckError) upon encountering objects that
 # do not support type check (i.e. with no __type_check__ method and no type hints)
@@ -20,18 +21,32 @@ TypeChecker = Callable[[object, Unpack[list[type]]], None | NoReturn]
 builtin_checks = dict[type, TypeChecker]()
 
 
-def type_check(obj, t: type) -> bool:
+def __extract_hint__(obj):
+    if hasattr(obj, "__orig_class__"):
+        return obj.__orig_class__
+    else:
+        raise ValueError(f"Type hint cannot be omitted for {type_repr(obj)}")
+
+
+def type_check(obj, t: type = Nothing) -> bool:
+    if t is Nothing:
+        t = __extract_hint__(obj)
     try:
         type_assert(obj, t)
         return TypeCheckResult(obj, t, passed=True, reason=None)
     except TypeCheckError as e:
-        return TypeCheckResult(obj, t, passed=False, reason=str(e))
+        return e.result
     except TypeError as e:
         type_error = e.with_traceback(None)
         raise type_error
 
 
-def type_assert(obj, t: type, *, chain: Chain | None = None) -> None | NoReturn:
+T = TypeVar("T")
+
+
+def type_assert(obj, t: type[T] = Nothing, *, chain: Chain | None = None) -> T:
+    if t is Nothing:
+        t = __extract_hint__(obj)
     if chain is None:
         chain = Chain(type(obj).__name__)
     try:
@@ -46,6 +61,7 @@ def type_assert(obj, t: type, *, chain: Chain | None = None) -> None | NoReturn:
     except TypeError as e:
         type_error = e.with_traceback(None)
         raise type_error
+    return obj
 
 
 def __type_assert__(obj, t: type, *, chain: Chain) -> None | NoReturn:
@@ -100,9 +116,10 @@ def __type_assert__(obj, t: type, *, chain: Chain) -> None | NoReturn:
 
     # Try to fallback to type hints
     parameters = getattr(origin, "__parameters__", tuple())
-    if len(parameters) == len(args): # Fully parameterized
+    if len(parameters) == len(args):  # Fully parameterized
         try:
-            hints: dict[str, TypeVar | type] = get_type_hints(obj)
+            cls = getattr(obj, "__class__", obj)
+            hints: dict[str, TypeVar | type] = get_type_hints(cls)
         except:  # No type hints available in user defined class
             return
         templates = dict(zip(parameters, args))
@@ -154,9 +171,9 @@ def type_guard(t: type):
     """
     if isinstance(t, type):  # class decorator
 
-        from .transparent import Transparent
+        from .proxy import TransparentProxy
 
-        class TypeGuard(Transparent, t):
+        class TypeGuard(TransparentProxy):
             def __call__(self, *args, **kwargs):
                 result = super().__call__(*args, **kwargs)
                 type_assert(result, t)
