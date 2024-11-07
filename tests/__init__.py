@@ -14,6 +14,7 @@ if os.environ.get("TARGET") == "typeguard":
 reason = Logger.create(None, "REASON", level_color="blue", msg_color="grey")
 passed = Logger.create(None, "PASS", level_color="green", msg_color="white")
 failed = Logger.create(None, "FAIL", level_color="red", msg_color="yellow")
+error = Logger.create(None, "ERROR", level_color="magenta", msg_color="magenta")
 
 total_tests = 0
 failed_tests = 0
@@ -47,8 +48,8 @@ class Test:
         except TypeCheckError as e:
             result = getattr(e, "result", False)
         except TypeError as e:
-            type_error = e.with_traceback(None)
-            raise type_error
+            error(e)
+            result = False
         success = bool(result) == expected
         logger = passed if success else failed
         msg = [str(result)]

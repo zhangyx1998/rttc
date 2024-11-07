@@ -74,6 +74,11 @@
 [REASON] C.x = str('1') is not int
 [ PASS ] add(1, 2) is int => True
 [ PASS ] add('1', '2') is str => True
-[ PASS ] [1, 2] is int | str => False
-[REASON] list([1, 2]) is not int | str
-[ PASS ] All 47 tests passed
+[ PASS ] add([], []) is list => True
+[ PASS ] add([1], [2]) is list => True
+[ PASS ] add(['1'], ['2']) is list => True
+[ PASS ] [None] is int | str | list[int] | list[str] => False
+[REASON] list([None]) is not int | str | list[int] | list[str]
+[ PASS ] () is int | str | list[int] | list[str] => False
+[REASON] tuple(()) is not int | str | list[int] | list[str]
+[ PASS ] All 51 tests passed
